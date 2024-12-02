@@ -1,5 +1,3 @@
-use std::fs;
-
 fn parse_input(input: &str) -> Vec<Vec<isize>> {
     return input
         .lines()
@@ -47,7 +45,7 @@ fn part2(input: &str) -> usize {
 }
 
 fn main() {
-    let input = fs::read_to_string("input.txt").expect("failed to open input");
+    let input = utils::read_input_file(2).expect("failed to open input");
     println!("Part 1: {}", part1(&input));
     println!("Part 2: {}", part2(&input));
 }
@@ -64,13 +62,13 @@ mod tests {
 1 3 6 7 9";
 
     #[test]
-    fn test_part1() {
+    fn day2_part1() {
         let res = part1(INPUT);
         assert_eq!(res, 2);
     }
 
     #[test]
-    fn test_part2() {
+    fn day2_part2() {
         let res = part2(INPUT);
         assert_eq!(res, 4);
     }

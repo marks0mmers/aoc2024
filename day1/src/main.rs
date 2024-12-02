@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs};
+use std::collections::HashMap;
 
 use iter_tools::Itertools;
 
@@ -42,7 +42,7 @@ fn part2(input: &str) -> usize {
 }
 
 fn main() {
-    let input = fs::read_to_string("input.txt").unwrap();
+    let input = utils::read_input_file(1).expect("failed to open input");
     println!("Part 1: {}", part1(&input));
     println!("Part 2: {}", part2(&input));
 }
@@ -59,13 +59,13 @@ mod tests {
 3   3";
 
     #[test]
-    fn test_part1() {
+    fn day1_part1() {
         let res = part1(INPUT);
         assert_eq!(res, 11);
     }
 
     #[test]
-    fn test_part2() {
+    fn day1_part2() {
         let res = part2(INPUT);
         assert_eq!(res, 31);
     }
