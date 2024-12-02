@@ -31,7 +31,7 @@ fn part2(input: &str) -> usize {
     let (left, right) = parse_input(input);
 
     let right_count = right.iter().fold(HashMap::new(), |mut map, val| {
-        map.entry(*val).and_modify(|n| *n += 1).or_insert(1usize);
+        map.entry(*val).and_modify(|n| *n += 1).or_insert(1);
         map
     });
 

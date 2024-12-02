@@ -10,20 +10,11 @@ fn parse_input(input: &str) -> Vec<Vec<isize>> {
 }
 
 fn is_safe(report: &[isize]) -> bool {
-    let diffs = report.windows(2).map(|pair| pair[0] - pair[1]);
+    let mut diffs = report.windows(2).map(|pair| pair[0] - pair[1]);
 
-    let is_negative = (report[0] - report[1]).is_negative();
+    let diff_sign = (report[0] - report[1]).signum();
 
-    for diff in diffs {
-        if !(1..=3).contains(&diff.abs())
-            || is_negative && diff.is_positive()
-            || !is_negative && diff.is_negative()
-        {
-            return false;
-        }
-    }
-
-    return true;
+    return diffs.all(|diff| (1..4).contains(&diff.abs()) && diff.signum() == diff_sign);
 }
 
 fn part1(input: &str) -> usize {
