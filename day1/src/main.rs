@@ -1,14 +1,15 @@
 use std::{collections::HashMap, fs};
 
+use iter_tools::Itertools;
+
 fn parse_input(input: &str) -> (Vec<usize>, Vec<usize>) {
     return input
         .lines()
         .map(|line| {
-            let (left, right) = line.split_once("   ").expect("invalid line");
-            (
-                left.parse::<usize>().expect("invalid usize"),
-                right.parse::<usize>().expect("invalid usize"),
-            )
+            line.split_whitespace()
+                .map(|chars| chars.parse::<usize>().expect("invalid number"))
+                .collect_tuple()
+                .expect("failed to produce tuple")
         })
         .unzip();
 }
