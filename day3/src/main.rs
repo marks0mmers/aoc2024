@@ -1,64 +1,41 @@
-fn scan_mul(scanner: &str) -> Option<(&str, usize)> {
-    let mut scanner = &scanner[4..];
-    let left: String = scanner.chars().take_while(|c| c.is_numeric()).collect();
-    scanner = &scanner[left.len()..];
-    if scanner.starts_with(",") {
-        scanner = &scanner[1..];
-        let right: String = scanner.chars().take_while(|c| c.is_numeric()).collect();
-        scanner = &scanner[right.len()..];
-        if scanner.starts_with(")") {
-            scanner = &scanner[1..];
-            if let (Ok(left), Ok(right)) = (left.parse::<usize>(), right.parse::<usize>()) {
-                return Some((scanner, left * right));
-            }
-        }
-    }
-
-    return None;
-}
+use regex::Regex;
 
 fn part1(input: &str) -> usize {
     let mut total = 0;
-    let mut scanner = input;
-    while scanner.len() > 0 {
-        if scanner.starts_with("mul(") {
-            if let Some((scanned, res)) = scan_mul(scanner) {
-                scanner = scanned;
-                total += res;
-                continue;
-            }
-        }
 
-        scanner = &scanner[1..];
+    let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
+
+    for (_, [left, right]) in re.captures_iter(input).map(|c| c.extract()) {
+        if let (Ok(left), Ok(right)) = (left.parse::<usize>(), right.parse::<usize>()) {
+            total += left * right;
+        }
     }
+
     return total;
 }
 
 fn part2(input: &str) -> usize {
     let mut total = 0;
     let mut should_mul = true;
-    let mut scanner = input;
-    while scanner.len() > 0 {
-        if scanner.starts_with("don't()") {
-            scanner = &scanner[7..];
-            should_mul = false;
-        }
 
-        if scanner.starts_with("do()") {
-            scanner = &scanner[4..];
-            should_mul = true;
-        }
+    let re = Regex::new(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)").unwrap();
 
-        if should_mul && scanner.starts_with("mul(") {
-            if let Some((scanned, res)) = scan_mul(scanner) {
-                scanner = scanned;
-                total += res;
-                continue;
+    for c in re.captures_iter(input) {
+        match c.get(0) {
+            Some(m) if m.as_str() == "do()" => should_mul = true,
+            Some(m) if m.as_str() == "don't()" => should_mul = false,
+            Some(_) if should_mul => {
+                let left = c.get(1).and_then(|m| m.as_str().parse::<usize>().ok());
+                let right = c.get(2).and_then(|m| m.as_str().parse::<usize>().ok());
+
+                if let (Some(left), Some(right)) = (left, right) {
+                    total += left * right;
+                }
             }
+            _ => {}
         }
-
-        scanner = &scanner[1..];
     }
+
     return total;
 }
 

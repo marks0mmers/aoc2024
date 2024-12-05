@@ -33,10 +33,10 @@ impl Update {
         let mut pages = self.pages.clone();
 
         pages.sort_by(|a, b| {
-            if ordering.get(a).map_or(false, |order| order.contains(b)) {
+            if ordering.get(a).is_some_and(|order| order.contains(b)) {
                 return Ordering::Less;
             }
-            if ordering.get(b).map_or(false, |order| order.contains(a)) {
+            if ordering.get(b).is_some_and(|order| order.contains(a)) {
                 return Ordering::Greater;
             }
             return Ordering::Equal;
