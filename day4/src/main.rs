@@ -1,5 +1,3 @@
-use std::usize;
-
 struct WordSearch {
     grid: Vec<Vec<char>>,
 }
