@@ -7,6 +7,34 @@ pub fn read_input_file(day: usize) -> std::io::Result<String> {
     fs::read_to_string(current.to_str().unwrap())
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Direction {
+    North,
+    East,
+    South,
+    West,
+}
+
+impl Direction {
+    pub fn get_offset(&self) -> Vec2 {
+        match self {
+            Direction::North => (0, -1).into(),
+            Direction::East => (1, 0).into(),
+            Direction::South => (0, 1).into(),
+            Direction::West => (-1, 0).into(),
+        }
+    }
+
+    pub fn turn_right(&self) -> Self {
+        match self {
+            Direction::North => Self::East,
+            Direction::East => Self::South,
+            Direction::South => Self::West,
+            Direction::West => Self::North,
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
 pub struct Vec2 {
     pub x: isize,
