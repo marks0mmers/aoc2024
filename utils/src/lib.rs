@@ -1,4 +1,9 @@
-use std::{env, fmt::Display, fs, ops::Add};
+use std::{
+    env,
+    fmt::Display,
+    fs,
+    ops::{Add, Sub},
+};
 
 pub fn read_input_file(day: usize) -> std::io::Result<String> {
     let mut current = env::current_dir()?;
@@ -76,5 +81,13 @@ impl Add for Vec2 {
 
     fn add(self, rhs: Self) -> Self::Output {
         Vec2::new(self.x + rhs.x, self.y + rhs.y)
+    }
+}
+
+impl Sub for Vec2 {
+    type Output = Vec2;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Vec2::new(self.x - rhs.x, self.y - rhs.y)
     }
 }

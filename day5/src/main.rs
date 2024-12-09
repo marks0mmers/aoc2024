@@ -49,21 +49,16 @@ impl Update {
 fn parse_input(input: &str) -> (HashMap<usize, Vec<usize>>, Vec<Update>) {
     let (ordering_string, update_string) = input.split_once("\n\n").expect("invalid input");
 
-    let mut ordering = HashMap::new();
+    let mut ordering: HashMap<usize, Vec<usize>> = HashMap::new();
 
     for (key, value) in ordering_string
         .lines()
         .filter_map(|line| line.split_once("|"))
-        .map(|(left, right)| {
-            (
-                left.parse::<usize>().expect("invalid number"),
-                right.parse::<usize>().expect("invalid number"),
-            )
-        })
+        .filter_map(|(left, right)| left.parse::<usize>().ok().zip(right.parse::<usize>().ok()))
     {
         ordering
             .entry(key)
-            .and_modify(|values: &mut Vec<usize>| values.extend([value]))
+            .and_modify(|values| values.extend([value]))
             .or_insert(vec![value]);
     }
 
