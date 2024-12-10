@@ -14,32 +14,33 @@ fn part1(input: &str) -> usize {
             false => blocks.extend(repeat(None).take(num)),
         }
     }
-    let mut result = blocks.clone();
 
     let mut blocks_rev = blocks
         .iter()
         .enumerate()
         .rev()
-        .filter(|(_, id)| id.is_some());
+        .filter_map(|(i, id)| id.map(|id| (i, id)));
 
-    for (i, c) in blocks.iter().enumerate() {
-        if c.is_none() {
-            if let Some((j, num)) = blocks_rev.next() {
-                if i < j {
-                    result[i] = *num;
-                    result[j] = None;
-                } else {
-                    break;
-                }
-            }
-        }
-    }
+    let mut last_rev_read = blocks.len();
 
-    return result
+    return blocks
         .iter()
         .enumerate()
-        .filter_map(|(i, id_opt)| id_opt.map(|num| (i, num)))
-        .map(|(i, id)| id * i)
+        .map_while(|(i, c)| {
+            if i >= last_rev_read {
+                return None;
+            }
+            match c {
+                None => match blocks_rev.next() {
+                    Some((j, id)) => {
+                        last_rev_read = j;
+                        Some(id * i)
+                    }
+                    None => None,
+                },
+                Some(id) => Some(id * i),
+            }
+        })
         .sum();
 }
 
@@ -50,26 +51,20 @@ struct Block {
     end: usize,
 }
 
-impl Block {
-    fn len(&self) -> usize {
-        self.end - self.start
-    }
-}
-
 fn part2(input: &str) -> usize {
     let mut blocks = Vec::new();
 
     let mut id = 0;
     let mut cursor = 0;
+
     for (i, c) in input.trim().chars().enumerate() {
         let num = c.to_digit(10).unwrap() as usize;
         if i % 2 == 0 {
-            let block = Block {
+            blocks.push(Block {
                 id,
                 start: cursor,
                 end: cursor + num,
-            };
-            blocks.push(block);
+            });
             id += 1;
         }
         cursor += num;
@@ -79,7 +74,7 @@ fn part2(input: &str) -> usize {
         for j in 0..blocks.len() - 1 {
             let left = blocks[j];
             let right = blocks[j + 1];
-            let len = block.len();
+            let len = block.end - block.start;
             if len <= right.start - left.end && block.start > left.start {
                 let block = blocks.iter_mut().find(|b| b.id == block.id).unwrap();
                 block.start = left.end;
