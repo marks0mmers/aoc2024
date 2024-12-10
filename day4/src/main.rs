@@ -1,3 +1,5 @@
+use utils::AdventOfCode;
+
 struct WordSearch {
     grid: Vec<Vec<char>>,
 }
@@ -131,41 +133,46 @@ impl WordSearch {
     }
 }
 
-fn part1(input: &str) -> usize {
-    let word_search = WordSearch::new(input);
-    let mut total = 0;
+struct Day4;
 
-    for row in 0..word_search.row_count() {
-        for col in 0..word_search.col_count() {
-            total += word_search.num_of_xmas(row, col);
+impl AdventOfCode for Day4 {
+    type Output = usize;
+
+    fn part1(input: &str) -> Self::Output {
+        let word_search = WordSearch::new(input);
+        let mut total = 0;
+
+        for row in 0..word_search.row_count() {
+            for col in 0..word_search.col_count() {
+                total += word_search.num_of_xmas(row, col);
+            }
         }
+
+        return total;
     }
 
-    return total;
-}
+    fn part2(input: &str) -> Self::Output {
+        let word_search = WordSearch::new(input);
+        let mut total = 0;
 
-fn part2(input: &str) -> usize {
-    let word_search = WordSearch::new(input);
-    let mut total = 0;
-
-    for row in 0..word_search.row_count() {
-        for col in 0..word_search.col_count() {
-            total += word_search.num_of_x_mas(row, col);
+        for row in 0..word_search.row_count() {
+            for col in 0..word_search.col_count() {
+                total += word_search.num_of_x_mas(row, col);
+            }
         }
-    }
 
-    return total;
+        return total;
+    }
 }
 
 fn main() {
-    let input = utils::read_input_file(4).expect("failed to open input");
-    println!("Part 1: {}", part1(&input));
-    println!("Part 2: {}", part2(&input));
+    Day4::run(4);
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{part1, part2};
+    use crate::Day4;
+    use utils::AdventOfCode;
 
     const INPUT: &str = "MMMSXXMASM
 MSAMXMSMSA
@@ -180,13 +187,13 @@ MXMXAXMASX";
 
     #[test]
     fn day4_part1() {
-        let res = part1(INPUT);
+        let res = Day4::part1(INPUT);
         assert_eq!(res, 18);
     }
 
     #[test]
     fn day4_part2() {
-        let res = part2(INPUT);
+        let res = Day4::part2(INPUT);
         assert_eq!(res, 9);
     }
 }

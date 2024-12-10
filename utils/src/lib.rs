@@ -12,6 +12,22 @@ pub fn read_input_file(day: usize) -> std::io::Result<String> {
     fs::read_to_string(current.to_str().unwrap())
 }
 
+pub trait AdventOfCode {
+    type Output;
+
+    fn part1(input: &str) -> Self::Output;
+    fn part2(input: &str) -> Self::Output;
+
+    fn run(day: usize)
+    where
+        Self::Output: Display,
+    {
+        let input = read_input_file(day).expect("failed to open input");
+        println!("Part 1: {}", Self::part1(&input));
+        println!("Part 2: {}", Self::part2(&input));
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Direction {
     North,

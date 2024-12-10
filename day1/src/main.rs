@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use iter_tools::Itertools;
+use utils::AdventOfCode;
 
 fn parse_input(input: &str) -> (Vec<usize>, Vec<usize>) {
     return input
@@ -14,42 +15,47 @@ fn parse_input(input: &str) -> (Vec<usize>, Vec<usize>) {
         .unzip();
 }
 
-fn part1(input: &str) -> usize {
-    let (mut left, mut right) = parse_input(input);
+struct Day1;
 
-    left.sort();
-    right.sort();
+impl AdventOfCode for Day1 {
+    type Output = usize;
 
-    return left
-        .iter()
-        .zip(right.iter())
-        .map(|(left, right)| left.abs_diff(*right))
-        .sum();
-}
+    fn part1(input: &str) -> Self::Output {
+        let (mut left, mut right) = parse_input(input);
 
-fn part2(input: &str) -> usize {
-    let (left, right) = parse_input(input);
+        left.sort();
+        right.sort();
 
-    let right_count = right.iter().fold(HashMap::new(), |mut map, val| {
-        map.entry(*val).and_modify(|n| *n += 1).or_insert(1);
-        map
-    });
+        return left
+            .iter()
+            .zip(right.iter())
+            .map(|(left, right)| left.abs_diff(*right))
+            .sum();
+    }
 
-    return left
-        .iter()
-        .map(|num| num * right_count.get(num).unwrap_or(&0))
-        .sum();
+    fn part2(input: &str) -> Self::Output {
+        let (left, right) = parse_input(input);
+
+        let right_count = right.iter().fold(HashMap::new(), |mut map, val| {
+            map.entry(*val).and_modify(|n| *n += 1).or_insert(1);
+            map
+        });
+
+        return left
+            .iter()
+            .map(|num| num * right_count.get(num).unwrap_or(&0))
+            .sum();
+    }
 }
 
 fn main() {
-    let input = utils::read_input_file(1).expect("failed to open input");
-    println!("Part 1: {}", part1(&input));
-    println!("Part 2: {}", part2(&input));
+    Day1::run(1);
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{part1, part2};
+    use crate::Day1;
+    use utils::AdventOfCode;
 
     const INPUT: &str = "3   4
 4   3
@@ -60,13 +66,13 @@ mod tests {
 
     #[test]
     fn day1_part1() {
-        let res = part1(INPUT);
+        let res = Day1::part1(INPUT);
         assert_eq!(res, 11);
     }
 
     #[test]
     fn day1_part2() {
-        let res = part2(INPUT);
+        let res = Day1::part2(INPUT);
         assert_eq!(res, 31);
     }
 }

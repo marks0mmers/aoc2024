@@ -1,5 +1,7 @@
 use std::{cmp::Ordering, collections::HashMap};
 
+use utils::AdventOfCode;
+
 struct Update {
     pages: Vec<usize>,
 }
@@ -76,35 +78,40 @@ fn parse_input(input: &str) -> (HashMap<usize, Vec<usize>>, Vec<Update>) {
     (ordering, updates)
 }
 
-fn part1(input: &str) -> usize {
-    let (ordering, updates) = parse_input(input);
+struct Day5;
 
-    return updates
-        .iter()
-        .filter(|update| update.is_in_order(&ordering))
-        .map(|update| update.middle_page())
-        .sum();
-}
+impl AdventOfCode for Day5 {
+    type Output = usize;
 
-fn part2(input: &str) -> usize {
-    let (ordering, updates) = parse_input(input);
+    fn part1(input: &str) -> Self::Output {
+        let (ordering, updates) = parse_input(input);
 
-    return updates
-        .iter()
-        .filter(|update| !update.is_in_order(&ordering))
-        .map(|update| update.fix_order(&ordering).middle_page())
-        .sum();
+        return updates
+            .iter()
+            .filter(|update| update.is_in_order(&ordering))
+            .map(|update| update.middle_page())
+            .sum();
+    }
+
+    fn part2(input: &str) -> Self::Output {
+        let (ordering, updates) = parse_input(input);
+
+        return updates
+            .iter()
+            .filter(|update| !update.is_in_order(&ordering))
+            .map(|update| update.fix_order(&ordering).middle_page())
+            .sum();
+    }
 }
 
 fn main() {
-    let input = utils::read_input_file(5).expect("failed to open input");
-    println!("Part 1: {}", part1(&input));
-    println!("Part 2: {}", part2(&input));
+    Day5::run(5);
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{part1, part2};
+    use crate::Day5;
+    use utils::AdventOfCode;
 
     const INPUT: &str = "47|53
 97|13
@@ -137,13 +144,13 @@ mod tests {
 
     #[test]
     fn day5_part1() {
-        let res = part1(INPUT);
+        let res = Day5::part1(INPUT);
         assert_eq!(res, 143);
     }
 
     #[test]
     fn day5_part2() {
-        let res = part2(INPUT);
+        let res = Day5::part2(INPUT);
         assert_eq!(res, 123);
     }
 }

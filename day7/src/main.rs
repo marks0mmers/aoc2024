@@ -1,3 +1,5 @@
+use utils::AdventOfCode;
+
 struct Equation {
     test: usize,
     numbers: Vec<usize>,
@@ -50,33 +52,38 @@ impl Equation {
     }
 }
 
-fn part1(input: &str) -> usize {
-    return input
-        .lines()
-        .map(|line| Equation::new(line))
-        .filter(|eq| eq.is_valid(&[Op::Add, Op::Mul]))
-        .map(|eq| eq.test)
-        .sum();
-}
+struct Day7;
 
-fn part2(input: &str) -> usize {
-    return input
-        .lines()
-        .map(|line| Equation::new(line))
-        .filter(|eq| eq.is_valid(&[Op::Add, Op::Mul, Op::Concat]))
-        .map(|eq| eq.test)
-        .sum();
+impl AdventOfCode for Day7 {
+    type Output = usize;
+
+    fn part1(input: &str) -> Self::Output {
+        return input
+            .lines()
+            .map(|line| Equation::new(line))
+            .filter(|eq| eq.is_valid(&[Op::Add, Op::Mul]))
+            .map(|eq| eq.test)
+            .sum();
+    }
+
+    fn part2(input: &str) -> Self::Output {
+        return input
+            .lines()
+            .map(|line| Equation::new(line))
+            .filter(|eq| eq.is_valid(&[Op::Add, Op::Mul, Op::Concat]))
+            .map(|eq| eq.test)
+            .sum();
+    }
 }
 
 fn main() {
-    let input = utils::read_input_file(7).expect("failed to open input");
-    println!("Part 1: {}", part1(&input));
-    println!("Part 2: {}", part2(&input));
+    Day7::run(7);
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{part1, part2};
+    use crate::Day7;
+    use utils::AdventOfCode;
 
     const INPUT: &str = "190: 10 19
 3267: 81 40 27
@@ -90,13 +97,13 @@ mod tests {
 
     #[test]
     fn day7_part1() {
-        let res = part1(INPUT);
+        let res = Day7::part1(INPUT);
         assert_eq!(res, 3749);
     }
 
     #[test]
     fn day7_part2() {
-        let res = part2(INPUT);
+        let res = Day7::part2(INPUT);
         assert_eq!(res, 11387);
     }
 }

@@ -1,10 +1,9 @@
-use core::panic;
 use std::{
     array,
     collections::{HashMap, HashSet},
 };
 
-use utils::{Direction, Vec2};
+use utils::{AdventOfCode, Direction, Vec2};
 
 struct TrailMap {
     map: HashMap<Vec2, usize>,
@@ -63,39 +62,44 @@ impl TrailMap {
     }
 }
 
-fn part1(input: &str) -> usize {
-    let trails = TrailMap::new(input);
-    return trails
-        .map
-        .iter()
-        .filter(|(_, height)| **height == 0)
-        .map(|(pos, height)| {
-            let mut finishing = HashSet::new();
-            trails.score(*pos, *height, &mut finishing);
-            finishing.len()
-        })
-        .sum();
-}
+struct Day10;
 
-fn part2(input: &str) -> usize {
-    let trails = TrailMap::new(input);
-    return trails
-        .map
-        .iter()
-        .filter(|(_, height)| **height == 0)
-        .map(|(pos, height)| trails.rating(*pos, *height))
-        .sum();
+impl AdventOfCode for Day10 {
+    type Output = usize;
+
+    fn part1(input: &str) -> Self::Output {
+        let trails = TrailMap::new(input);
+        return trails
+            .map
+            .iter()
+            .filter(|(_, height)| **height == 0)
+            .map(|(pos, height)| {
+                let mut finishing = HashSet::new();
+                trails.score(*pos, *height, &mut finishing);
+                finishing.len()
+            })
+            .sum();
+    }
+
+    fn part2(input: &str) -> Self::Output {
+        let trails = TrailMap::new(input);
+        return trails
+            .map
+            .iter()
+            .filter(|(_, height)| **height == 0)
+            .map(|(pos, height)| trails.rating(*pos, *height))
+            .sum();
+    }
 }
 
 fn main() {
-    let input = utils::read_input_file(10).expect("failed to open input");
-    println!("Part 1: {}", part1(&input));
-    println!("Part 2: {}", part2(&input));
+    Day10::run(10);
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{part1, part2};
+    use crate::Day10;
+    use utils::AdventOfCode;
 
     const INPUT: &str = "89010123
 78121874
@@ -108,13 +112,13 @@ mod tests {
 
     #[test]
     fn day10_part1() {
-        let res = part1(INPUT);
+        let res = Day10::part1(INPUT);
         assert_eq!(res, 36);
     }
 
     #[test]
     fn day10_part2() {
-        let res = part2(INPUT);
+        let res = Day10::part2(INPUT);
         assert_eq!(res, 81);
     }
 }

@@ -1,3 +1,5 @@
+use utils::AdventOfCode;
+
 fn parse_input(input: &str) -> Vec<Vec<isize>> {
     return input
         .lines()
@@ -17,33 +19,39 @@ fn is_safe(report: &[isize]) -> bool {
     return diffs.all(|diff| (1..4).contains(&diff.abs()) && diff.signum() == diff_sign);
 }
 
-fn part1(input: &str) -> usize {
-    let reports = parse_input(input);
+struct Day2;
 
-    return reports.iter().filter(|report| is_safe(report)).count();
-}
+impl AdventOfCode for Day2 {
+    type Output = usize;
 
-fn part2(input: &str) -> usize {
-    let reports = parse_input(input);
+    fn part1(input: &str) -> Self::Output {
+        let reports = parse_input(input);
 
-    return reports
-        .iter()
-        .filter(|report| {
-            is_safe(report)
-                || (0..report.len()).any(|i| is_safe(&[&report[0..i], &report[i + 1..]].concat()))
-        })
-        .count();
+        return reports.iter().filter(|report| is_safe(report)).count();
+    }
+
+    fn part2(input: &str) -> Self::Output {
+        let reports = parse_input(input);
+
+        return reports
+            .iter()
+            .filter(|report| {
+                is_safe(report)
+                    || (0..report.len())
+                        .any(|i| is_safe(&[&report[0..i], &report[i + 1..]].concat()))
+            })
+            .count();
+    }
 }
 
 fn main() {
-    let input = utils::read_input_file(2).expect("failed to open input");
-    println!("Part 1: {}", part1(&input));
-    println!("Part 2: {}", part2(&input));
+    Day2::run(2);
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{part1, part2};
+    use crate::Day2;
+    use utils::AdventOfCode;
 
     const INPUT: &str = "7 6 4 2 1
 1 2 7 8 9
@@ -54,13 +62,13 @@ mod tests {
 
     #[test]
     fn day2_part1() {
-        let res = part1(INPUT);
+        let res = Day2::part1(INPUT);
         assert_eq!(res, 2);
     }
 
     #[test]
     fn day2_part2() {
-        let res = part2(INPUT);
+        let res = Day2::part2(INPUT);
         assert_eq!(res, 4);
     }
 }

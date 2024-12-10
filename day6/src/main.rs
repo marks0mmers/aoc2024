@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use utils::{Direction, Vec2};
+use utils::{AdventOfCode, Direction, Vec2};
 
 #[derive(Debug, Clone, Copy)]
 enum Tile {
@@ -135,40 +135,45 @@ impl State {
     }
 }
 
-fn part1(input: &str) -> usize {
-    let mut state = State::new(input);
-    loop {
-        if !state.take_turn() {
-            return state.num_visited();
-        }
-    }
-}
+struct Day6;
 
-fn part2(input: &str) -> usize {
-    let state = State::new(input);
-    let mut total = 0;
+impl AdventOfCode for Day6 {
+    type Output = usize;
 
-    for x in 0..state.size.x {
-        for y in 0..state.size.y {
-            let pos = Vec2::new(x, y);
-            if pos != state.guard.pos && !state.is_blocked(pos) && state.is_loop(pos) {
-                total += 1;
+    fn part1(input: &str) -> Self::Output {
+        let mut state = State::new(input);
+        loop {
+            if !state.take_turn() {
+                return state.num_visited();
             }
         }
     }
 
-    return total;
+    fn part2(input: &str) -> Self::Output {
+        let state = State::new(input);
+        let mut total = 0;
+
+        for x in 0..state.size.x {
+            for y in 0..state.size.y {
+                let pos = Vec2::new(x, y);
+                if pos != state.guard.pos && !state.is_blocked(pos) && state.is_loop(pos) {
+                    total += 1;
+                }
+            }
+        }
+
+        return total;
+    }
 }
 
 fn main() {
-    let input = utils::read_input_file(6).expect("failed to open input");
-    println!("Part 1: {}", part1(&input));
-    println!("Part 2: {}", part2(&input));
+    Day6::run(6);
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{part1, part2};
+    use crate::Day6;
+    use utils::AdventOfCode;
 
     const INPUT: &str = "....#.....
 .........#
@@ -183,13 +188,13 @@ mod tests {
 
     #[test]
     fn day6_part1() {
-        let res = part1(INPUT);
+        let res = Day6::part1(INPUT);
         assert_eq!(res, 41);
     }
 
     #[test]
     fn day6_part2() {
-        let res = part2(INPUT);
+        let res = Day6::part2(INPUT);
         assert_eq!(res, 6);
     }
 }

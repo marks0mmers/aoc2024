@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use utils::Vec2;
+use utils::{AdventOfCode, Vec2};
 
 struct Map {
     size: Vec2,
@@ -70,25 +70,29 @@ impl Map {
     }
 }
 
-fn part1(input: &str) -> usize {
-    let map = Map::new(input);
-    return map.antinodes(false).len();
-}
+struct Day8;
 
-fn part2(input: &str) -> usize {
-    let map = Map::new(input);
-    return map.antinodes(true).len();
+impl AdventOfCode for Day8 {
+    type Output = usize;
+    fn part1(input: &str) -> Self::Output {
+        let map = Map::new(input);
+        return map.antinodes(false).len();
+    }
+
+    fn part2(input: &str) -> Self::Output {
+        let map = Map::new(input);
+        return map.antinodes(true).len();
+    }
 }
 
 fn main() {
-    let input = utils::read_input_file(8).expect("failed to open input");
-    println!("Part 1: {}", part1(&input));
-    println!("Part 2: {}", part2(&input));
+    Day8::run(8);
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{part1, part2};
+    use crate::Day8;
+    use utils::AdventOfCode;
 
     const INPUT: &str = "............
 ........0...
@@ -105,13 +109,13 @@ mod tests {
 
     #[test]
     fn day8_part1() {
-        let res = part1(INPUT);
+        let res = Day8::part1(INPUT);
         assert_eq!(res, 14);
     }
 
     #[test]
     fn day8_part2() {
-        let res = part2(INPUT);
+        let res = Day8::part2(INPUT);
         assert_eq!(res, 34);
     }
 }
