@@ -14,16 +14,11 @@ impl Map {
         let mut antennas = HashMap::new();
 
         for (y, line) in input.lines().enumerate() {
-            for (x, char) in line.chars().enumerate() {
-                match char {
-                    '.' => {}
-                    c => {
-                        antennas
-                            .entry(c)
-                            .and_modify(|vecs: &mut Vec<Vec2>| vecs.push((x, y).into()))
-                            .or_insert(vec![(x, y).into()]);
-                    }
-                };
+            for (x, c) in line.chars().enumerate().filter(|(_, c)| *c != '.') {
+                antennas
+                    .entry(c)
+                    .and_modify(|vecs: &mut Vec<Vec2>| vecs.push((x, y).into()))
+                    .or_insert(vec![(x, y).into()]);
             }
         }
 

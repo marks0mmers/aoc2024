@@ -1,7 +1,4 @@
-use std::{
-    array,
-    collections::{HashMap, HashSet},
-};
+use std::collections::{HashMap, HashSet};
 
 use utils::{AdventOfCode, Direction, Vec2};
 
@@ -25,38 +22,38 @@ impl TrailMap {
     }
 
     fn surronding(&self, pos: Vec2) -> [Vec2; 4] {
-        array::from_fn(|i| match i {
-            0 => pos + Direction::North.get_offset(),
-            1 => pos + Direction::East.get_offset(),
-            2 => pos + Direction::South.get_offset(),
-            3 => pos + Direction::West.get_offset(),
-            _ => panic!("invalid"),
-        })
+        return [
+            pos + Direction::North.get_offset(),
+            pos + Direction::East.get_offset(),
+            pos + Direction::South.get_offset(),
+            pos + Direction::West.get_offset(),
+        ];
     }
 
-    fn score(&self, pos: Vec2, height: usize, finishing: &mut HashSet<Vec2>) {
+    fn score<'a>(&'a self, pos: &'a Vec2, height: &usize) -> HashSet<&Vec2> {
         match height {
-            9 => {
-                finishing.insert(pos);
-            }
+            9 => HashSet::from([pos]),
             height => self
-                .surronding(pos)
+                .surronding(*pos)
                 .iter()
                 .filter_map(|pos| self.map.get_key_value(pos))
                 .filter(|(_, new_height)| height + 1 == **new_height)
-                .for_each(|(pos, height)| self.score(*pos, *height, finishing)),
-        };
+                .fold(HashSet::new(), |mut set, (pos, height)| {
+                    set.extend(self.score(pos, height));
+                    set
+                }),
+        }
     }
 
-    fn rating(&self, pos: Vec2, height: usize) -> usize {
+    fn rating(&self, pos: &Vec2, height: &usize) -> usize {
         match height {
             9 => 1,
             height => self
-                .surronding(pos)
+                .surronding(*pos)
                 .iter()
                 .filter_map(|pos| self.map.get_key_value(pos))
                 .filter(|(_, new_height)| height + 1 == **new_height)
-                .map(|(pos, height)| self.rating(*pos, *height))
+                .map(|(pos, height)| self.rating(pos, height))
                 .sum(),
         }
     }
@@ -73,11 +70,7 @@ impl AdventOfCode for Day10 {
             .map
             .iter()
             .filter(|(_, height)| **height == 0)
-            .map(|(pos, height)| {
-                let mut finishing = HashSet::new();
-                trails.score(*pos, *height, &mut finishing);
-                finishing.len()
-            })
+            .map(|(pos, height)| trails.score(pos, height).len())
             .sum();
     }
 
@@ -87,7 +80,7 @@ impl AdventOfCode for Day10 {
             .map
             .iter()
             .filter(|(_, height)| **height == 0)
-            .map(|(pos, height)| trails.rating(*pos, *height))
+            .map(|(pos, height)| trails.rating(pos, height))
             .sum();
     }
 }

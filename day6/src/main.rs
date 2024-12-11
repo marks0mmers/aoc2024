@@ -62,10 +62,8 @@ impl State {
     }
 
     fn take_turn(&mut self) -> bool {
-        if self.guard.pos.x < 0
-            || self.guard.pos.x >= self.size.x
-            || self.guard.pos.y < 0
-            || self.guard.pos.y >= self.size.y
+        if !(0..self.size.x).contains(&self.guard.pos.x)
+            || !(0..self.size.y).contains(&self.guard.pos.y)
         {
             return false;
         }
@@ -96,10 +94,8 @@ impl State {
         new_state.tiles.insert(pos, Tile::Blocked);
 
         loop {
-            if new_state.guard.pos.x < 0
-                || new_state.guard.pos.x >= new_state.size.x
-                || new_state.guard.pos.y < 0
-                || new_state.guard.pos.y >= new_state.size.y
+            if !(0..new_state.size.x).contains(&new_state.guard.pos.x)
+                || !(0..new_state.size.y).contains(&new_state.guard.pos.y)
             {
                 return false;
             }

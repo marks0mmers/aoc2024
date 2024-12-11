@@ -12,7 +12,7 @@ impl AdventOfCode for Day3 {
         let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
 
         for (_, [left, right]) in re.captures_iter(input).map(|c| c.extract()) {
-            if let (Ok(left), Ok(right)) = (left.parse::<usize>(), right.parse::<usize>()) {
+            if let Ok((left, right)) = utils::parse_tuple::<usize>(left, right) {
                 total += left * right;
             }
         }

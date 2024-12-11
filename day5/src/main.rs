@@ -56,7 +56,7 @@ fn parse_input(input: &str) -> (HashMap<usize, Vec<usize>>, Vec<Update>) {
     for (key, value) in ordering_string
         .lines()
         .filter_map(|line| line.split_once("|"))
-        .filter_map(|(left, right)| left.parse::<usize>().ok().zip(right.parse::<usize>().ok()))
+        .filter_map(|(left, right)| utils::parse_tuple(left, right).ok())
     {
         ordering
             .entry(key)

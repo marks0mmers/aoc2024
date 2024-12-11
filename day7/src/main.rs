@@ -16,7 +16,7 @@ impl Op {
         match self {
             Op::Add => left + right,
             Op::Mul => left * right,
-            Op::Concat => format!("{left}{right}").parse().unwrap(),
+            Op::Concat => left * 10usize.pow(right.ilog10() + 1) + right,
         }
     }
 }
@@ -36,43 +36,42 @@ impl Equation {
     }
 
     fn is_valid(&self, ops: &[Op]) -> bool {
-        fn check(test: usize, ops: &[Op], prev: usize, op: &Op, rest: &[usize]) -> bool {
-            match rest {
-                [next] => op.exec(prev, next) == test,
-                [next, rest @ ..] => ops
-                    .iter()
-                    .any(|next_op| check(test, ops, op.exec(prev, next), next_op, rest)),
-                [] => panic!("invalid"),
-            }
-        }
+        return ops.iter().any(|op| self.check(ops, 0, op, &self.numbers));
+    }
 
-        return ops
-            .iter()
-            .any(|op| check(self.test, ops, 0, op, &self.numbers));
+    fn check(&self, ops: &[Op], prev: usize, op: &Op, rest: &[usize]) -> bool {
+        match rest {
+            [next] => op.exec(prev, next) == self.test,
+            [next, rest @ ..] => ops
+                .iter()
+                .any(|next_op| self.check(ops, op.exec(prev, next), next_op, rest)),
+            [] => false,
+        }
     }
 }
 
 struct Day7;
 
+impl Day7 {
+    fn sum_of_valid_equations(input: &str, ops: &[Op]) -> usize {
+        return input
+            .lines()
+            .map(|line| Equation::new(line))
+            .filter(|eq| eq.is_valid(ops))
+            .map(|eq| eq.test)
+            .sum();
+    }
+}
+
 impl AdventOfCode for Day7 {
     type Output = usize;
 
     fn part1(input: &str) -> Self::Output {
-        return input
-            .lines()
-            .map(|line| Equation::new(line))
-            .filter(|eq| eq.is_valid(&[Op::Add, Op::Mul]))
-            .map(|eq| eq.test)
-            .sum();
+        return Self::sum_of_valid_equations(input, &[Op::Add, Op::Mul]);
     }
 
     fn part2(input: &str) -> Self::Output {
-        return input
-            .lines()
-            .map(|line| Equation::new(line))
-            .filter(|eq| eq.is_valid(&[Op::Add, Op::Mul, Op::Concat]))
-            .map(|eq| eq.test)
-            .sum();
+        return Self::sum_of_valid_equations(input, &[Op::Add, Op::Mul, Op::Concat]);
     }
 }
 

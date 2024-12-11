@@ -8,7 +8,7 @@ fn parse_input(input: &str) -> (Vec<usize>, Vec<usize>) {
         .lines()
         .map(|line| {
             line.split_whitespace()
-                .map(|chars| chars.parse::<usize>().expect("invalid number"))
+                .filter_map(|chars| chars.parse::<usize>().ok())
                 .collect_tuple()
                 .expect("failed to produce tuple")
         })
@@ -43,7 +43,7 @@ impl AdventOfCode for Day1 {
 
         return left
             .iter()
-            .map(|num| num * right_count.get(num).unwrap_or(&0))
+            .filter_map(|left| right_count.get(left).map(|right| left * right))
             .sum();
     }
 }

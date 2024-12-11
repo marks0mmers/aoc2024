@@ -5,7 +5,7 @@ fn parse_input(input: &str) -> Vec<Vec<isize>> {
         .lines()
         .map(|line| {
             line.split_whitespace()
-                .map(|chars| chars.parse::<isize>().expect("invalid number"))
+                .filter_map(|chars| chars.parse().ok())
                 .collect()
         })
         .collect();
