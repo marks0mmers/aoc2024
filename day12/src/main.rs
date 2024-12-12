@@ -1,7 +1,4 @@
-use std::{
-    cmp::Ordering,
-    collections::{HashMap, HashSet},
-};
+use std::collections::{HashMap, HashSet};
 
 use utils::{AdventOfCode, Direction, Vec2};
 
@@ -16,22 +13,62 @@ impl Region {
     }
 
     fn perimeter(&self) -> usize {
-        let count = self
+        return self
             .plots
             .iter()
             .map(|plot| {
                 Direction::all()
                     .iter()
                     .map(|dir| *plot + dir.get_offset())
-                    .filter(|adj_pos| !self.plots.contains(adj_pos))
+                    .filter(|pos| !self.plots.contains(pos))
                     .count()
             })
             .sum();
-        return count;
     }
 
     fn sides(&self) -> usize {
-        return 0;
+        match self.plots.len() {
+            1 => 4,
+            _ => self
+                .plots
+                .iter()
+                .map(|plot| {
+                    let adj = Direction::all()
+                        .iter()
+                        .map(|dir| *plot + dir.get_offset())
+                        .filter(|pos| self.plots.contains(pos))
+                        .collect::<Vec<_>>();
+
+                    return match adj.as_slice() {
+                        [_] => 2,
+                        [one, two] if one.x != two.x && one.y != two.y => {
+                            let diag = *plot + *one - *plot + *two - *plot;
+                            match !self.plots.contains(&diag) {
+                                true => 2,
+                                false => 1,
+                            }
+                        }
+                        adj => {
+                            let mut counts = HashMap::new();
+                            for pos in adj.iter().flat_map(|pos| {
+                                Direction::all()
+                                    .iter()
+                                    .map(|dir| *pos + dir.get_offset())
+                                    .filter(|pos| !self.plots.contains(pos))
+                                    .collect::<Vec<_>>()
+                            }) {
+                                counts
+                                    .entry(pos)
+                                    .and_modify(|count| *count += 1usize)
+                                    .or_insert(1usize);
+                            }
+
+                            return counts.values().filter(|c| **c > 1).count();
+                        }
+                    };
+                })
+                .sum(),
+        }
     }
 }
 
