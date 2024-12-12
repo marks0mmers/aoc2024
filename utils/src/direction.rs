@@ -9,6 +9,15 @@ pub enum Direction {
 }
 
 impl Direction {
+    pub fn all() -> [Direction; 4] {
+        [
+            Direction::North,
+            Direction::East,
+            Direction::South,
+            Direction::West,
+        ]
+    }
+
     pub fn get_offset(&self) -> Vec2 {
         match self {
             Direction::North => (0, -1).into(),

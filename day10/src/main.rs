@@ -30,7 +30,7 @@ impl TrailMap {
         ];
     }
 
-    fn score<'a>(&'a self, pos: &'a Vec2, height: &usize) -> HashSet<&Vec2> {
+    fn score<'a>(&'a self, pos: &'a Vec2, height: &usize) -> HashSet<&'a Vec2> {
         match height {
             9 => HashSet::from([pos]),
             height => self
