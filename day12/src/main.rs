@@ -127,16 +127,14 @@ impl AdventOfCode for Day12 {
     type Output = usize;
 
     fn part1(input: &str) -> Self::Output {
-        let regions = parse_regions(input);
-        return regions
+        return parse_regions(input)
             .iter()
             .map(|region| region.area() * region.perimeter())
             .sum();
     }
 
     fn part2(input: &str) -> Self::Output {
-        let regions = parse_regions(input);
-        return regions
+        return parse_regions(input)
             .iter()
             .map(|region| region.area() * region.sides())
             .sum();
