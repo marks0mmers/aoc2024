@@ -1,6 +1,7 @@
 use std::{
     fmt::Display,
-    ops::{Add, Sub},
+    isize,
+    ops::{Add, Div, Mul, Sub},
 };
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
@@ -16,8 +17,23 @@ impl Display for Vec2 {
 }
 
 impl Vec2 {
-    pub fn new(x: isize, y: isize) -> Self {
+    pub const ZERO: Vec2 = Vec2::new(0, 0);
+
+    pub const fn new(x: isize, y: isize) -> Self {
         Self { x, y }
+    }
+
+    pub fn add_x(&self, x: isize) -> Vec2 {
+        Self {
+            x: self.x + x,
+            y: self.y,
+        }
+    }
+    pub fn add_y(&self, y: isize) -> Vec2 {
+        Self {
+            x: self.x,
+            y: self.y + y,
+        }
     }
 }
 
@@ -52,5 +68,21 @@ impl Sub for Vec2 {
 
     fn sub(self, rhs: Self) -> Self::Output {
         Vec2::new(self.x - rhs.x, self.y - rhs.y)
+    }
+}
+
+impl Mul<isize> for Vec2 {
+    type Output = Vec2;
+
+    fn mul(self, rhs: isize) -> Self::Output {
+        Self::new(self.x * rhs, self.y * rhs)
+    }
+}
+
+impl Div<isize> for Vec2 {
+    type Output = Vec2;
+
+    fn div(self, rhs: isize) -> Self::Output {
+        Self::new(self.x / rhs, self.y / rhs)
     }
 }
