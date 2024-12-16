@@ -101,7 +101,7 @@ impl Warehouse {
     }
 
     fn can_move(&self, pos: Vec2, dir: &Direction, expanded: bool) -> bool {
-        let next_pos = pos + dir.get_offset();
+        let next_pos = pos + dir.offset();
         match self.tiles.get(&next_pos) {
             Some(Tile::Box(_)) if !expanded || dir.is_horizontal() => {
                 self.can_move(next_pos, dir, expanded)
@@ -116,7 +116,7 @@ impl Warehouse {
     }
 
     fn do_move(&mut self, pos: Vec2, dir: &Direction, expanded: bool) {
-        let next_pos = pos + dir.get_offset();
+        let next_pos = pos + dir.offset();
         match self.tiles.remove(&pos) {
             Some(Tile::Box(side)) if !expanded || dir.is_horizontal() => {
                 self.do_move(next_pos, dir, expanded);
@@ -138,8 +138,8 @@ impl Warehouse {
         let moves = self.moves.clone();
         for dir in moves {
             if self.can_move(self.robot, &dir, expanded) {
-                self.do_move(self.robot + dir.get_offset(), &dir, expanded);
-                self.robot = self.robot + dir.get_offset();
+                self.do_move(self.robot + dir.offset(), &dir, expanded);
+                self.robot = self.robot + dir.offset();
             }
         }
     }

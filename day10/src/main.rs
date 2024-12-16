@@ -23,10 +23,10 @@ impl TrailMap {
 
     fn surronding(&self, pos: Vec2) -> [Vec2; 4] {
         return [
-            pos + Direction::North.get_offset(),
-            pos + Direction::East.get_offset(),
-            pos + Direction::South.get_offset(),
-            pos + Direction::West.get_offset(),
+            pos + Direction::North.offset(),
+            pos + Direction::East.offset(),
+            pos + Direction::South.offset(),
+            pos + Direction::West.offset(),
         ];
     }
 

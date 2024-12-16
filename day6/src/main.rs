@@ -67,7 +67,7 @@ impl State {
         {
             return false;
         }
-        let next_pos = self.guard.pos + self.guard.dir.get_offset();
+        let next_pos = self.guard.pos + self.guard.dir.offset();
 
         match self.tiles.get(&next_pos) {
             Some(next) if matches!(next, Tile::Blocked) => {
@@ -99,7 +99,7 @@ impl State {
             {
                 return false;
             }
-            let next_pos = new_state.guard.pos + new_state.guard.dir.get_offset();
+            let next_pos = new_state.guard.pos + new_state.guard.dir.offset();
 
             match new_state.tiles.get(&next_pos) {
                 Some(next) => match next {

@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use crate::vec2::Vec2;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Direction {
     North,
     East,
@@ -31,7 +31,7 @@ impl Direction {
         ]
     }
 
-    pub fn get_offset(&self) -> Vec2 {
+    pub fn offset(&self) -> Vec2 {
         match self {
             Direction::North => (0, -1).into(),
             Direction::East => (1, 0).into(),
@@ -46,6 +46,15 @@ impl Direction {
             Direction::East => Self::South,
             Direction::South => Self::West,
             Direction::West => Self::North,
+        }
+    }
+
+    pub fn turn_left(&self) -> Self {
+        match self {
+            Direction::North => Self::West,
+            Direction::East => Self::North,
+            Direction::South => Self::East,
+            Direction::West => Self::South,
         }
     }
 
@@ -71,5 +80,14 @@ impl Direction {
 
     pub fn is_vertical(&self) -> bool {
         self.is_north() || self.is_south()
+    }
+
+    pub fn opposite(&self) -> Self {
+        match self {
+            Direction::North => Self::South,
+            Direction::East => Self::West,
+            Direction::South => Self::North,
+            Direction::West => Self::East,
+        }
     }
 }

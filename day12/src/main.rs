@@ -19,7 +19,7 @@ impl Region {
             .map(|plot| {
                 Direction::all()
                     .iter()
-                    .map(|dir| *plot + dir.get_offset())
+                    .map(|dir| *plot + dir.offset())
                     .filter(|pos| !self.plots.contains(pos))
                     .count()
             })
@@ -35,7 +35,7 @@ impl Region {
                 .map(|plot| {
                     let adj = Direction::all()
                         .iter()
-                        .map(|dir| *plot + dir.get_offset())
+                        .map(|dir| *plot + dir.offset())
                         .filter(|pos| self.plots.contains(pos))
                         .collect::<Vec<_>>();
 
@@ -53,7 +53,7 @@ impl Region {
                             for pos in adj.iter().flat_map(|pos| {
                                 Direction::all()
                                     .iter()
-                                    .map(|dir| *pos + dir.get_offset())
+                                    .map(|dir| *pos + dir.offset())
                                     .filter(|pos| !self.plots.contains(pos))
                                     .collect::<Vec<_>>()
                             }) {
@@ -82,7 +82,7 @@ fn find_adjacent<'a>(
 
     for (pos, other_c) in Direction::all()
         .iter()
-        .filter_map(|dir| plots.get_key_value(&(*pos + dir.get_offset())))
+        .filter_map(|dir| plots.get_key_value(&(*pos + dir.offset())))
     {
         if other_c == c && !existing.contains(pos) {
             find_adjacent(other_c, plots, pos, existing)
