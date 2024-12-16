@@ -12,20 +12,19 @@ struct ClawMachine {
 }
 
 impl ClawMachine {
-    fn new(input: &str, p_offset: usize) -> Self {
-        let re = Regex::new(
-            "Button A: X\\+(\\d+), Y\\+(\\d+)\nButton B: X\\+(\\d+), Y\\+(\\d+)\nPrize: X=(\\d+), Y=(\\d+)",
-        )
-        .unwrap();
+    const REGEX: &str = "Button A: X\\+(\\d+), Y\\+(\\d+)\nButton B: X\\+(\\d+), Y\\+(\\d+)\nPrize: X=(\\d+), Y=(\\d+)";
 
-        if let Some((_, [ax, ay, bx, by, px, py])) = re.captures(input).map(|c| c.extract()) {
-            let a = Vec2::new(ax.parse().unwrap(), ay.parse().unwrap());
-            let b = Vec2::new(bx.parse().unwrap(), by.parse().unwrap());
-            let p =
-                Vec2::new(px.parse().unwrap(), py.parse().unwrap()) + (p_offset, p_offset).into();
-            return Self { a, b, p };
-        }
-        panic!("invalid input: {input}")
+    fn new(input: &str, p_offset: isize) -> Option<Self> {
+        let (_, [ax, ay, bx, by, px, py]) = Regex::new(Self::REGEX)
+            .ok()?
+            .captures(input)
+            .map(|c| c.extract())?;
+
+        let a = utils::parse_tuple::<usize>(ax, ay).ok()?.into();
+        let b = utils::parse_tuple::<usize>(bx, by).ok()?.into();
+        let p = Into::<Vec2>::into(utils::parse_tuple::<usize>(px, py).ok()?) + Vec2::xy(p_offset);
+
+        return Some(Self { a, b, p });
     }
 
     fn tokens(&self) -> Option<usize> {
@@ -51,16 +50,14 @@ impl AdventOfCode for Day13 {
     fn part1(input: &str) -> Self::Output {
         return input
             .split("\n\n")
-            .map(|input| ClawMachine::new(input, 0))
-            .filter_map(|cm| cm.tokens())
+            .filter_map(|input| ClawMachine::new(input, 0).and_then(|cm| cm.tokens()))
             .sum();
     }
 
     fn part2(input: &str) -> Self::Output {
         return input
             .split("\n\n")
-            .map(|input| ClawMachine::new(input, 10000000000000))
-            .filter_map(|cm| cm.tokens())
+            .filter_map(|input| ClawMachine::new(input, 10000000000000).and_then(|cm| cm.tokens()))
             .sum();
     }
 }

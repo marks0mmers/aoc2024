@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use crate::vec2::Vec2;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -6,6 +8,17 @@ pub enum Direction {
     East,
     South,
     West,
+}
+
+impl Display for Direction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Direction::North => write!(f, "North"),
+            Direction::East => write!(f, "East"),
+            Direction::South => write!(f, "South"),
+            Direction::West => write!(f, "West"),
+        }
+    }
 }
 
 impl Direction {
@@ -34,5 +47,29 @@ impl Direction {
             Direction::South => Self::West,
             Direction::West => Self::North,
         }
+    }
+
+    pub fn is_north(&self) -> bool {
+        matches!(self, Direction::North)
+    }
+
+    pub fn is_east(&self) -> bool {
+        matches!(self, Direction::East)
+    }
+
+    pub fn is_south(&self) -> bool {
+        matches!(self, Direction::South)
+    }
+
+    pub fn is_west(&self) -> bool {
+        matches!(self, Direction::West)
+    }
+
+    pub fn is_horizontal(&self) -> bool {
+        self.is_east() || self.is_west()
+    }
+
+    pub fn is_vertical(&self) -> bool {
+        self.is_north() || self.is_south()
     }
 }

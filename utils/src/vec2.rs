@@ -23,6 +23,10 @@ impl Vec2 {
         Self { x, y }
     }
 
+    pub fn xy(v: isize) -> Self {
+        Self { x: v, y: v }
+    }
+
     pub fn add_x(&self, x: isize) -> Vec2 {
         Self {
             x: self.x + x,

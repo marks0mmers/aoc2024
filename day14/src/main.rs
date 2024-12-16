@@ -11,7 +11,7 @@ struct State {
 impl State {
     fn new(input: &str) -> Self {
         Self {
-            robots: input.lines().map(|line| Robot::new(line)).collect(),
+            robots: input.lines().filter_map(|line| Robot::new(line)).collect(),
             size: if cfg!(test) {
                 Vec2::new(11, 7)
             } else {
@@ -20,22 +20,17 @@ impl State {
         }
     }
 
-    fn r#move(&mut self) {
-        for robot in self.robots.iter_mut() {
-            robot.r#move(self.size);
-        }
+    fn tick(&mut self) {
+        self.robots.iter_mut().for_each(|r| r.tick(self.size));
     }
 
     fn pos_map(&self) -> HashMap<Vec2, usize> {
-        let mut map = HashMap::new();
-
-        for robot in &self.robots {
-            map.entry(robot.pos)
+        return self.robots.iter().fold(HashMap::new(), |mut map, r| {
+            map.entry(r.pos)
                 .and_modify(|count| *count += 1)
                 .or_insert(1);
-        }
-
-        return map;
+            map
+        });
     }
 
     fn output_image(&self, second: usize) {
@@ -44,9 +39,9 @@ impl State {
 
         for x in 0..self.size.x {
             for y in 0..self.size.y {
-                if let Some(_) = pos_map.get(&(x, y).into()) {
-                    image.put_pixel(x as u32, y as u32, Rgb([255, 255, 255]));
-                }
+                pos_map
+                    .get(&(x, y).into())
+                    .inspect(|_| image.put_pixel(x as u32, y as u32, Rgb([255, 255, 255])));
             }
         }
 
@@ -62,33 +57,27 @@ struct Robot {
 }
 
 impl Robot {
-    fn new(input: &str) -> Self {
-        let (pos, vel) = input.split_once(" ").unwrap();
+    fn new(input: &str) -> Option<Self> {
+        let (pos, vel) = input.split_once(" ")?;
         let pos = &pos[2..];
         let vel = &vel[2..];
-        let (px, py) = pos.split_once(",").unwrap();
-        let (vx, vy) = vel.split_once(",").unwrap();
-        let (px, py) = utils::parse_tuple(px, py).unwrap();
-        let (vx, vy) = utils::parse_tuple(vx, vy).unwrap();
-        Self {
+        let (px, py) = pos.split_once(",")?;
+        let (vx, vy) = vel.split_once(",")?;
+        let (px, py) = utils::parse_tuple(px, py).ok()?;
+        let (vx, vy) = utils::parse_tuple(vx, vy).ok()?;
+        Some(Self {
             pos: Vec2::new(px, py),
             vel: Vec2::new(vx, vy),
-        }
+        })
     }
 
-    fn r#move(&mut self, bounds: Vec2) {
+    fn tick(&mut self, bounds: Vec2) {
         self.pos = self.pos + self.vel;
-        if self.pos.x < 0 {
-            self.pos.x += bounds.x;
+        if !(0..bounds.x).contains(&self.pos.x) {
+            self.pos.x -= self.pos.x.signum() * bounds.x;
         }
-        if self.pos.x >= bounds.x {
-            self.pos.x -= bounds.x;
-        }
-        if self.pos.y < 0 {
-            self.pos.y += bounds.y;
-        }
-        if self.pos.y >= bounds.y {
-            self.pos.y -= bounds.y;
+        if !(0..bounds.y).contains(&self.pos.y) {
+            self.pos.y -= self.pos.y.signum() * bounds.y;
         }
     }
 }
@@ -100,30 +89,19 @@ impl AdventOfCode for Day14 {
 
     fn part1(input: &str) -> Self::Output {
         let mut state = State::new(input);
-        for _ in 0..100 {
-            state.r#move();
-        }
-        let pos_map = state.pos_map();
+        (0..100).for_each(|_| state.tick());
 
+        let pos_map = state.pos_map();
         let width = state.size / 2;
-        let quadrants = (0..2)
+
+        return (0..2)
             .flat_map(|x| {
                 (0..2).map(move |y| {
-                    let dx = match x {
-                        0 => 0,
-                        x => width.x * x + 1,
-                    };
-                    let dy = match y {
-                        0 => 0,
-                        y => width.y * y + 1,
-                    };
+                    let dx = if x != 0 { width.x * x + 1 } else { 0 };
+                    let dy = if y != 0 { width.y * y + 1 } else { 0 };
                     (Vec2::ZERO.add_x(dx).add_y(dy), width.add_x(dx).add_y(dy))
                 })
             })
-            .collect::<Vec<_>>();
-
-        return quadrants
-            .iter()
             .map(|(start, end)| {
                 pos_map
                     .iter()
@@ -133,13 +111,13 @@ impl AdventOfCode for Day14 {
                     .map(|(_, count)| count)
                     .sum::<usize>()
             })
-            .fold(1, |acc, val| acc * val);
+            .product();
     }
 
     fn part2(input: &str) -> Self::Output {
         let mut state = State::new(input);
         for i in 0..10000 {
-            state.r#move();
+            state.tick();
             if !cfg!(test) {
                 state.output_image(i + 1);
             }
