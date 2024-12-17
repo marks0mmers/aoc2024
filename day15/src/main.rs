@@ -130,7 +130,7 @@ impl Warehouse {
                 self.tiles
                     .insert(next_pos.add_x(side.offset()), Tile::Box(side.opposite()));
             }
-            _ => (),
+            _ => {}
         }
     }
 
