@@ -47,10 +47,11 @@ impl Maze {
 
         let mut queue = VecDeque::from([(self.reindeer.0, self.reindeer.1, 0usize)]);
         while let Some((pos, dir, score)) = queue.pop_front() {
-            if let Some(cost) = visited.get(&Key { pos, dir }) {
-                if *cost < score {
-                    continue;
-                }
+            if visited
+                .get(&Key { pos, dir })
+                .is_some_and(|cost| *cost < score)
+            {
+                continue;
             }
             visited.insert(Key { pos, dir }, score);
             let front = pos + dir.offset();

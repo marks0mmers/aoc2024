@@ -23,6 +23,13 @@ impl Vec2 {
         Self { x, y }
     }
 
+    pub fn from_pair(pair: (isize, isize)) -> Self {
+        Self {
+            x: pair.0,
+            y: pair.1,
+        }
+    }
+
     pub fn xy(v: isize) -> Self {
         Self { x: v, y: v }
     }
