@@ -1,11 +1,8 @@
-use std::collections::HashSet;
-
 use pathfinding::prelude::astar;
 use utils::{AdventOfCode, Direction, Vec2};
 
 struct MemorySpace {
     incoming: Vec<Vec2>,
-    space: HashSet<Vec2>,
 }
 
 impl MemorySpace {
@@ -21,54 +18,35 @@ impl MemorySpace {
                 .lines()
                 .filter_map(|line| {
                     line.split_once(",")
-                        .and_then(|(x, y)| utils::parse_tuple::<usize>(x, y).ok())
-                        .map(|pair| pair.into())
+                        .and_then(|(x, y)| utils::parse_tuple(x, y).ok())
+                        .map(|pair| Vec2::from_pair(pair))
                 })
                 .collect(),
-            space: HashSet::new(),
         }
-    }
-
-    fn simulate(&mut self, bytes: usize) {
-        self.space.extend(&self.incoming[..bytes]);
-        self.incoming = self.incoming[bytes..].to_vec();
-    }
-
-    fn drop_next(&mut self) -> Option<Vec2> {
-        if let Some((left, rest)) = self.incoming.clone().split_first() {
-            self.space.insert(left.clone());
-            self.incoming = rest.to_vec();
-            return Some(*left);
-        }
-        return None;
     }
 
     fn in_bounds(&self, pos: &Vec2) -> bool {
         return (0..=Self::SIZE.x).contains(&pos.x) && (0..=Self::SIZE.y).contains(&pos.y);
     }
 
-    fn successors(&self, pos: Vec2) -> Vec<(Vec2, u32)> {
-        Direction::all()
-            .iter()
-            .map(|dir| pos + dir.offset())
-            .filter(|pos| self.in_bounds(&pos) && !self.space.contains(&pos))
-            .map(|pos| (pos, 1))
-            .collect()
-    }
-
-    fn distance(&self, pos: Vec2) -> u32 {
-        let diff = Self::SIZE - pos;
-        return (diff.x + diff.y) as u32;
-    }
-
-    fn shortest_path(&self) -> Option<usize> {
+    fn shortest_path(&self, bytes: usize) -> Option<usize> {
         return astar(
             &Vec2::ZERO,
-            |p| self.successors(*p),
-            |p| self.distance(*p),
-            |p| *p == Self::SIZE,
+            |&pos| {
+                Direction::all()
+                    .iter()
+                    .map(|dir| pos + dir.offset())
+                    .filter(|pos| self.in_bounds(&pos) && !self.incoming[..bytes].contains(&pos))
+                    .map(|pos| (pos, 1))
+                    .collect::<Vec<_>>()
+            },
+            |&pos| {
+                let diff = Self::SIZE - pos;
+                return (diff.x + diff.y) as usize;
+            },
+            |&pos| pos == Self::SIZE,
         )
-        .map(|(_, len)| len as usize);
+        .map(|(_, len)| len);
     }
 }
 
@@ -78,16 +56,18 @@ impl AdventOfCode for Day18 {
     type Output = String;
 
     fn part1(input: &str) -> Self::Output {
-        let mut mem = MemorySpace::new(input);
-        mem.simulate(if cfg!(test) { 12 } else { 1024 });
-        return mem.shortest_path().unwrap().to_string();
+        let mem = MemorySpace::new(input);
+        return mem
+            .shortest_path(if cfg!(test) { 12 } else { 1024 })
+            .unwrap()
+            .to_string();
     }
 
     fn part2(input: &str) -> Self::Output {
-        let mut mem = MemorySpace::new(input);
-        mem.simulate(if cfg!(test) { 12 } else { 1024 });
-        while let Some(curr) = mem.drop_next() {
-            if mem.shortest_path().is_none() {
+        let mem = MemorySpace::new(input);
+        for i in if cfg!(test) { 12 } else { 1024 }..mem.incoming.len() {
+            if mem.shortest_path(i).is_none() {
+                let curr = mem.incoming[i - 1];
                 return format!("{},{}", curr.x, curr.y);
             }
         }
