@@ -1,14 +1,14 @@
 use std::usize;
 
 use regex::Regex;
-use utils::{AdventOfCode, Vec2};
+use utils::{AdventOfCode, Point};
 
 struct Day13;
 
 struct ClawMachine {
-    a: Vec2,
-    b: Vec2,
-    p: Vec2,
+    a: Point,
+    b: Point,
+    p: Point,
 }
 
 impl ClawMachine {
@@ -22,7 +22,8 @@ impl ClawMachine {
 
         let a = utils::parse_tuple::<usize>(ax, ay).ok()?.into();
         let b = utils::parse_tuple::<usize>(bx, by).ok()?.into();
-        let p = Into::<Vec2>::into(utils::parse_tuple::<usize>(px, py).ok()?) + Vec2::xy(p_offset);
+        let p =
+            Into::<Point>::into(utils::parse_tuple::<usize>(px, py).ok()?) + Point::xy(p_offset);
 
         return Some(Self { a, b, p });
     }

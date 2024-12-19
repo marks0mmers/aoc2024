@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use utils::{AdventOfCode, Direction, Vec2};
+use utils::{AdventOfCode, Direction, Point};
 
 #[derive(Debug, Clone, Copy)]
 enum Tile {
@@ -22,15 +22,15 @@ impl Tile {
 
 #[derive(Clone, Copy)]
 struct Guard {
-    pos: Vec2,
+    pos: Point,
     dir: Direction,
 }
 
 #[derive(Clone)]
 struct State {
     guard: Guard,
-    tiles: HashMap<Vec2, Tile>,
-    size: Vec2,
+    tiles: HashMap<Point, Tile>,
+    size: Point,
 }
 
 impl State {
@@ -83,13 +83,13 @@ impl State {
         return true;
     }
 
-    fn is_blocked(&self, pos: Vec2) -> bool {
+    fn is_blocked(&self, pos: Point) -> bool {
         self.tiles
             .get(&pos)
             .is_some_and(|tile| matches!(tile, Tile::Blocked))
     }
 
-    fn is_loop(&self, pos: Vec2) -> bool {
+    fn is_loop(&self, pos: Point) -> bool {
         let mut new_state = self.clone();
         new_state.tiles.insert(pos, Tile::Blocked);
 
@@ -151,7 +151,7 @@ impl AdventOfCode for Day6 {
 
         for x in 0..state.size.x {
             for y in 0..state.size.y {
-                let pos = Vec2::new(x, y);
+                let pos = Point::new(x, y);
                 if pos != state.guard.pos && !state.is_blocked(pos) && state.is_loop(pos) {
                     total += 1;
                 }

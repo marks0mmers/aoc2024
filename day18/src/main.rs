@@ -1,15 +1,15 @@
 use pathfinding::prelude::astar;
-use utils::{AdventOfCode, Direction, Vec2};
+use utils::{AdventOfCode, Direction, Point};
 
 struct MemorySpace {
-    incoming: Vec<Vec2>,
+    incoming: Vec<Point>,
 }
 
 impl MemorySpace {
-    const SIZE: Vec2 = if cfg!(test) {
-        Vec2::new(6, 6)
+    const SIZE: Point = if cfg!(test) {
+        Point::new(6, 6)
     } else {
-        Vec2::new(70, 70)
+        Point::new(70, 70)
     };
 
     fn new(input: &str) -> Self {
@@ -19,19 +19,19 @@ impl MemorySpace {
                 .filter_map(|line| {
                     line.split_once(",")
                         .and_then(|(x, y)| utils::parse_tuple(x, y).ok())
-                        .map(|pair| Vec2::from_pair(pair))
+                        .map(|pair| Point::from_pair(pair))
                 })
                 .collect(),
         }
     }
 
-    fn in_bounds(&self, pos: &Vec2) -> bool {
+    fn in_bounds(&self, pos: &Point) -> bool {
         return (0..=Self::SIZE.x).contains(&pos.x) && (0..=Self::SIZE.y).contains(&pos.y);
     }
 
     fn shortest_path(&self, bytes: usize) -> Option<usize> {
         return astar(
-            &Vec2::ZERO,
+            &Point::ZERO,
             |&pos| {
                 Direction::all()
                     .iter()

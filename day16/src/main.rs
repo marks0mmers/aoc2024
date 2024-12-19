@@ -1,16 +1,16 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 
-use utils::{AdventOfCode, Direction, Vec2};
+use utils::{AdventOfCode, Direction, Point};
 
 struct Maze {
-    tiles: HashSet<Vec2>,
-    reindeer: (Vec2, Direction),
-    end: Vec2,
+    tiles: HashSet<Point>,
+    reindeer: (Point, Direction),
+    end: Point,
 }
 
 #[derive(Hash, PartialEq, Eq)]
 struct Key {
-    pos: Vec2,
+    pos: Point,
     dir: Direction,
 }
 
@@ -104,7 +104,7 @@ impl Maze {
                     min_score = min_score.min(score);
                     score_map
                         .entry(score)
-                        .and_modify(|p: &mut HashSet<Vec2>| p.extend(&new_path))
+                        .and_modify(|p: &mut HashSet<Point>| p.extend(&new_path))
                         .or_insert(new_path);
                 }
                 continue;

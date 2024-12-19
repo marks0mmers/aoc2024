@@ -1,10 +1,10 @@
 use std::collections::{HashMap, HashSet};
 
-use utils::{AdventOfCode, Vec2};
+use utils::{AdventOfCode, Point};
 
 struct Map {
-    size: Vec2,
-    antennas: HashMap<char, Vec<Vec2>>,
+    size: Point,
+    antennas: HashMap<char, Vec<Point>>,
 }
 
 impl Map {
@@ -17,7 +17,7 @@ impl Map {
             for (x, c) in line.chars().enumerate().filter(|(_, c)| *c != '.') {
                 antennas
                     .entry(c)
-                    .and_modify(|vecs: &mut Vec<Vec2>| vecs.push((x, y).into()))
+                    .and_modify(|vecs: &mut Vec<Point>| vecs.push((x, y).into()))
                     .or_insert(vec![(x, y).into()]);
             }
         }
@@ -25,7 +25,7 @@ impl Map {
         Self { size, antennas }
     }
 
-    fn antinodes(&self, extend: bool) -> HashSet<Vec2> {
+    fn antinodes(&self, extend: bool) -> HashSet<Point> {
         let mut set = HashSet::new();
 
         for antennas in self.antennas.values().filter(|a| a.len() > 1) {

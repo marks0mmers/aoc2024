@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::vec2::Vec2;
+use crate::vec2::Point;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Direction {
@@ -31,7 +31,7 @@ impl Direction {
         ]
     }
 
-    pub fn offset(&self) -> Vec2 {
+    pub fn offset(&self) -> Point {
         match self {
             Direction::North => (0, -1).into(),
             Direction::East => (1, 0).into(),

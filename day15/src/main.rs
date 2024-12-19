@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use utils::{AdventOfCode, Direction, Vec2};
+use utils::{AdventOfCode, Direction, Point};
 
 #[derive(Debug, Clone, Copy)]
 enum BoxSide {
@@ -42,9 +42,9 @@ impl Tile {
 }
 
 struct Warehouse {
-    tiles: HashMap<Vec2, Tile>,
+    tiles: HashMap<Point, Tile>,
     moves: Vec<Direction>,
-    robot: Vec2,
+    robot: Point,
 }
 
 impl Warehouse {
@@ -100,7 +100,7 @@ impl Warehouse {
         )
     }
 
-    fn can_move(&self, pos: Vec2, dir: &Direction, expanded: bool) -> bool {
+    fn can_move(&self, pos: Point, dir: &Direction, expanded: bool) -> bool {
         let next_pos = pos + dir.offset();
         match self.tiles.get(&next_pos) {
             Some(Tile::Box(_)) if !expanded || dir.is_horizontal() => {
@@ -115,7 +115,7 @@ impl Warehouse {
         }
     }
 
-    fn do_move(&mut self, pos: Vec2, dir: &Direction, expanded: bool) {
+    fn do_move(&mut self, pos: Point, dir: &Direction, expanded: bool) {
         let next_pos = pos + dir.offset();
         match self.tiles.remove(&pos) {
             Some(Tile::Box(side)) if !expanded || dir.is_horizontal() => {

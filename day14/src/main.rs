@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
 use image::{Rgb, RgbImage};
-use utils::{AdventOfCode, Vec2};
+use utils::{AdventOfCode, Point};
 
 struct State {
     robots: Vec<Robot>,
-    size: Vec2,
+    size: Point,
 }
 
 impl State {
@@ -13,9 +13,9 @@ impl State {
         Self {
             robots: input.lines().filter_map(|line| Robot::new(line)).collect(),
             size: if cfg!(test) {
-                Vec2::new(11, 7)
+                Point::new(11, 7)
             } else {
-                Vec2::new(101, 103)
+                Point::new(101, 103)
             },
         }
     }
@@ -24,7 +24,7 @@ impl State {
         self.robots.iter_mut().for_each(|r| r.tick(self.size));
     }
 
-    fn pos_map(&self) -> HashMap<Vec2, usize> {
+    fn pos_map(&self) -> HashMap<Point, usize> {
         return self.robots.iter().fold(HashMap::new(), |mut map, r| {
             map.entry(r.pos)
                 .and_modify(|count| *count += 1)
@@ -52,8 +52,8 @@ impl State {
 }
 
 struct Robot {
-    pos: Vec2,
-    vel: Vec2,
+    pos: Point,
+    vel: Point,
 }
 
 impl Robot {
@@ -66,12 +66,12 @@ impl Robot {
         let (px, py) = utils::parse_tuple(px, py).ok()?;
         let (vx, vy) = utils::parse_tuple(vx, vy).ok()?;
         Some(Self {
-            pos: Vec2::new(px, py),
-            vel: Vec2::new(vx, vy),
+            pos: Point::new(px, py),
+            vel: Point::new(vx, vy),
         })
     }
 
-    fn tick(&mut self, bounds: Vec2) {
+    fn tick(&mut self, bounds: Point) {
         self.pos = self.pos + self.vel;
         if !(0..bounds.x).contains(&self.pos.x) {
             self.pos.x -= self.pos.x.signum() * bounds.x;
@@ -99,7 +99,7 @@ impl AdventOfCode for Day14 {
                 (0..2).map(move |y| {
                     let dx = if x != 0 { width.x * x + 1 } else { 0 };
                     let dy = if y != 0 { width.y * y + 1 } else { 0 };
-                    (Vec2::ZERO.add_x(dx).add_y(dy), width.add_x(dx).add_y(dy))
+                    (Point::ZERO.add_x(dx).add_y(dy), width.add_x(dx).add_y(dy))
                 })
             })
             .map(|(start, end)| {

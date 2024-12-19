@@ -1,10 +1,10 @@
 use std::collections::{HashMap, HashSet};
 
-use utils::{AdventOfCode, Direction, Vec2};
+use utils::{AdventOfCode, Direction, Point};
 
 #[derive(Debug)]
 struct Region {
-    plots: HashSet<Vec2>,
+    plots: HashSet<Point>,
 }
 
 impl Region {
@@ -74,9 +74,9 @@ impl Region {
 
 fn find_adjacent<'a>(
     c: &'a char,
-    plots: &'a HashMap<Vec2, char>,
-    pos: &'a Vec2,
-    existing: &'a mut HashSet<Vec2>,
+    plots: &'a HashMap<Point, char>,
+    pos: &'a Point,
+    existing: &'a mut HashSet<Point>,
 ) {
     existing.insert(*pos);
 
@@ -91,7 +91,7 @@ fn find_adjacent<'a>(
 }
 
 fn parse_regions(input: &str) -> Vec<Region> {
-    let plots: HashMap<Vec2, char> = input
+    let plots: HashMap<Point, char> = input
         .lines()
         .enumerate()
         .flat_map(|(y, line)| {
@@ -101,7 +101,7 @@ fn parse_regions(input: &str) -> Vec<Region> {
         })
         .collect();
 
-    let mut points_to_skip: HashSet<Vec2> = HashSet::new();
+    let mut points_to_skip: HashSet<Point> = HashSet::new();
     let mut regions = Vec::new();
 
     for (pos, c) in &plots {

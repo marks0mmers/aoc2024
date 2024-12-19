@@ -1,9 +1,9 @@
 use std::collections::{HashMap, HashSet};
 
-use utils::{AdventOfCode, Direction, Vec2};
+use utils::{AdventOfCode, Direction, Point};
 
 struct TrailMap {
-    map: HashMap<Vec2, usize>,
+    map: HashMap<Point, usize>,
 }
 
 impl TrailMap {
@@ -21,7 +21,7 @@ impl TrailMap {
         }
     }
 
-    fn surronding(&self, pos: Vec2) -> [Vec2; 4] {
+    fn surronding(&self, pos: Point) -> [Point; 4] {
         return [
             pos + Direction::North.offset(),
             pos + Direction::East.offset(),
@@ -30,7 +30,7 @@ impl TrailMap {
         ];
     }
 
-    fn score<'a>(&'a self, pos: &'a Vec2, height: &usize) -> HashSet<&'a Vec2> {
+    fn score<'a>(&'a self, pos: &'a Point, height: &usize) -> HashSet<&'a Point> {
         match height {
             9 => HashSet::from([pos]),
             height => self
@@ -45,7 +45,7 @@ impl TrailMap {
         }
     }
 
-    fn rating(&self, pos: &Vec2, height: &usize) -> usize {
+    fn rating(&self, pos: &Point, height: &usize) -> usize {
         match height {
             9 => 1,
             height => self
