@@ -16,26 +16,6 @@ impl<'a> Onsen<'a> {
         }
     }
 
-    fn check_design<'b>(&self, design: &'b str, cache: &mut HashMap<&'b str, bool>) -> bool {
-        if design.is_empty() {
-            return true;
-        }
-        if let Some(&result) = cache.get(design) {
-            return result;
-        }
-        if self
-            .patterns
-            .iter()
-            .filter(|pat| design.starts_with(**pat))
-            .any(|pat| self.check_design(&design[pat.len()..], cache))
-        {
-            cache.insert(design, true);
-            return true;
-        }
-        cache.insert(design, false);
-        return false;
-    }
-
     fn num_designs<'b>(&self, design: &'b str, cache: &mut HashMap<&'b str, usize>) -> usize {
         if design.is_empty() {
             return 1;
@@ -46,8 +26,10 @@ impl<'a> Onsen<'a> {
         let result = self
             .patterns
             .iter()
-            .filter(|pat| design.starts_with(**pat))
-            .map(|pat| self.num_designs(&design[pat.len()..], cache))
+            .filter_map(|&pat| match design.starts_with(pat) {
+                true => Some(self.num_designs(&design[pat.len()..], cache)),
+                false => None,
+            })
             .sum();
 
         cache.insert(design, result);
@@ -65,7 +47,7 @@ impl AdventOfCode for Day19 {
         return onsen
             .designs
             .iter()
-            .filter(|design| onsen.check_design(design, &mut HashMap::new()))
+            .filter(|design| onsen.num_designs(design, &mut HashMap::new()) > 0)
             .count();
     }
 
