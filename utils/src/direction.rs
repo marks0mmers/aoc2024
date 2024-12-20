@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::vec2::Point;
+use crate::point::Point;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Direction {
