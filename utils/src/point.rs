@@ -46,6 +46,11 @@ impl Point {
             y: self.y + y,
         }
     }
+
+    pub fn rect_dist(&self, other: Point) -> isize {
+        let diff = *self - other;
+        return diff.x.abs() + diff.y.abs();
+    }
 }
 
 impl From<(isize, isize)> for Point {
